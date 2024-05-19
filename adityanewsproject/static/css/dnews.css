@@ -1,0 +1,8 @@
+.jumbotron {
+    margin-top: 200px;
+    background: gold;
+}
+
+body {
+    background: url(https://images.unsplash.com/photo-1583146200984-f2dfc3d1e27c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3JlZW5yeXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60);
+}

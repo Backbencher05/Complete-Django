@@ -1,0 +1,142 @@
+1. To Get all the Data Record 
+  -> employee.object.all()
+  this is query , always return "query set",
+  so the return type of all() method is query set 
+
+
+2. Let I want only one Record
+If we want to get only one record then we can use get() method.
+ 
+  -> e = employee.object.get(id=1)
+     print(type(emp)) 
+#<class 'testapp.models.Employee'>
+The return type of get() method is Employee Object.
+    e.name
+
+Case-1: How to find Query associated with QuerySet 
+        qs = Employee.objects.all() 
+        print(qs.query)
+
+Case-2: How to Filter Records based on some Condition
+let i want all the Employee, whose salary is greater than 15000
+
+    -> employee = Employee.object.filter(esal__gt=15000)
+
+__gt : greater than
+__gte : greater than equal to 
+__lt: less than 
+__lte: less than equal to 
+
+
+Case 3. Various possible Field Look ups:
+
+1. __exact : Exact Match (is case sensitive)
+    -> e = Employee.object.get(id__exact=14)
+       e.id
+    o/p: 14
+    -> e = Employee.object.get(ename__exact='aditya')
+        e.name
+    o/p: 'aditya'
+
+2. __iexact (not a case sensitive)
+    both a and A excepted
+    -> Blog.objects.get(name__iexact='beatles blog') 
+    -> Blog.objects.get(name__iexact=None)
+
+    The equivalent queries are:
+    SELECT ... WHERE name ILIKE 'beatles blog'; 
+    SELECT ... WHERE name IS NULL;
+
+3) contains: Case-sensitive Containment Test 
+
+    -> Entry.objects.get(headline__contains='Lennon')
+
+    SQL equivalent: 
+    SELECT ... WHERE headline LIKE '%Lennon%';
+
+4) icontains: Case-insensitive Containment Test 
+    Example: Entry.objects.get(headline__icontains='Lennon')
+
+5) in : In a given iterable; often a List, Tuple OR queryset.
+
+    Examples: Entry.objects.filter(id__in=[1, 3, 4]) 
+              Entry.objects.filter(headline__in='abc')
+
+6) gt Greater than Example: Entry.objects.filter(id__gt=4)
+7) gte Greater than or equal to.
+8) lt Less than.
+9) lte Less than or equal to.
+10) startswith Case-sensitive starts-with.
+     Entry.objects.filter(headline__startswith='Lennon')
+
+11) istartswith Case-insensitive starts-with. 
+Example: Entry.objects.filter(headline__istartswith='Lennon')
+
+12) endswith Case-sensitive ends-with. Example: Entry.objects.filter(headline__endswith='Lennon')
+
+13) iendswith Case-insensitive ends-with.
+ Example: Entry.objects.filter(headline__iendswith='Lennon')
+
+14) range:Range test (inclusive) 
+    1) import datetime 
+    2) start_date = datetime.date(2005, 1, 1) 
+    3) end_date = datetime.date(2005, 3, 31) 
+    4) Entry.objects.filter(pub_date__range=(start_date, end_date)) 
+    
+    Eg-2: employees=Employee.objects.filter(esal__range=(12000,16000))
+
+Note: There are several other field lookups are possible. (Documentation) 
+https://docs.djangoproject.com/en/2.1/ref/models/querysets/#id4
+
+
+Case-3: How to implement OR Queries in Django ORM
+
+2 ways are available 
+1) queryset_1 | queryset_2 
+2) filter(Q(condition1)|Q(condition2))
+
+Eg 1: To get all employees whose name startswith 'A' OR salary < 15000
+
+    -> employee = Employee.object.filter(ename__startwith ='A') |  Employee.object.filter(esal__lt=15000)
+
+    -> from django.db.models import Q
+    employee = Employee.object.filter(Q(ename__startwith ='A') | Q(esal__lt=15000))
+
+Case-4: How to implement AND Queries in Django ORM
+ 
+ 3 ways
+1) filter(condition1,condition2) 
+2) queryset_1 & queryset_2
+3) filter(Q(condition_1)&Q(condition_2))
+
+Eg: To get all employees whose name startswith 'J' AND salary < 15000
+
+1) employees= Employee.objects.filter(ename__startswith='J',esal__lt=15000)
+2) employees= Employee.objects.filter(ename__startswith='J') & Employee.objects.filter(esal__lt=15000) 
+3) employees= Employee.objects.filter(Q(ename__startswith='J') & Q(esal__lt=15000))
+
+
+Case-5: How to implement NOT Queries in Django ORM 
+
+2 ways 
+1) exclude(condition) 
+2) filter(~Q(condition))
+
+Eg: To select all employees whose name not starts with 'J':
+
+    -> employee = Employee.oject.exclude(ename__startswith='J')
+    -> employees= Employee.objects.filter(~Q(ename__startswith='J'))
+
+
+Case-6: How to perform Union Operation for Query Sets of the Same OR different Models
+
+By using union operation, we can combine results of 2 or more query sets.
+very helpfull when we work with multiple tables
+    -> q1=Employee.objects.filter(esal__lt<15000) 
+    -> q2=Employee.objects.filter(ename__endswith='J') 
+    -> q3=q1.union(q2)
+
+    mydict = {'employee': q3}
+    return render(request, 'testapp/index.html', mydict)
+
+Note: The union operator can be performed only with the querysets having the same fields and data types. Otherwise we will get error saying django.db.utils.OperationalError: SELECTs to the left and right of UNION do not have the same number of result columns.
