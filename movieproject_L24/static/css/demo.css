@@ -5,10 +5,10 @@ body{
     
 }
 
-containter{
+/* containter{
     margin-top: 200px;
-}
-.container.jumbotron{
+} */
+.container .jumbotron{
     margin-top: 200px;
     background: orange;
     color: white;
