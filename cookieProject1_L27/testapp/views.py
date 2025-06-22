@@ -16,3 +16,9 @@ def count_view(request):
     # response.set_cookie('count', newcount)  #Temprary Cookies : it store in Browser
     response.set_cookie('count', newcount, max_age=160)  #Permanaent Cookies : It store in local machine
     return response
+
+"""
+2 types of cookie are available
+- temprary cookie: once browser closed data / cookies gone (stored in browser)
+- persistant/permanent cookie: if browser closed still cookie data/cookiw are availabe (store in our local machine)
+"""
